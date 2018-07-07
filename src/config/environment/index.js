@@ -31,6 +31,13 @@ var all = {
   secrets: {
     session: 'homerp-secret-phrase'
   },
+
+  acl:{
+    baseUrl: 'api',
+    defaultRole: 'guest',
+    decodedObjectName: 'user',
+    filename: './nacl.json'
+  }
 };
 
 // Export the config object based on the NODE_ENV

@@ -23,7 +23,7 @@ export function isAuthenticated() {
       if (req.query && req.query.hasOwnProperty('access_token')) {
         req.headers.authorization = 'Bearer ' + req.query.access_token;
       }
-      validateJwt(req, res, next);
+      validateJwt(req, res, next);  
     })
     // Attach user to request
     .use(function(req, res, next) {
@@ -41,6 +41,46 @@ export function isAuthenticated() {
         })
         .catch(err => next(err));
     });
+}
+
+export function authenticate() {
+  return compose()
+        // Validate jwt
+        .use(function(req, res, next) {
+            // allow access_token to be passed through query parameter as well
+          if(req.query && req.query.hasOwnProperty('access_token')) {
+            req.headers.authorization = `Bearer ${req.query.access_token}`;
+          }
+            // IE11 forgets to set Authorization header sometimes. Pull from cookie instead.
+          if(req.query && typeof req.headers.authorization === 'undefined') {
+            req.headers.authorization = `Bearer ${req.cookies.token}`;
+          }
+          if(req.headers.authorization == "Bearer undefined"){
+            next()
+          }else{
+            return validateJwt(req, res, next);
+          }
+        })
+        // Attach user to request
+        .use(function(req, res, next) {
+          if(!req.user || !req.user._id){
+            req.user = {role:'guest'}
+            next()
+            return null;
+          }
+          User.findById(req.user._id).exec()
+                .then(user => {
+                  if(!user) {
+                    req.user = {role:'guest'};
+                    next()
+                    return null;
+                  }
+                  req.user = user;
+                  next();
+                  return null;
+                })
+                .catch(err => next(err));
+        });
 }
 
 /**

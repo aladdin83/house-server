@@ -1,0 +1,12 @@
+[
+  {
+    "group": "guest",
+    "permissions": [
+      {
+        "resource": "*",
+        "methods": ["POST", "GET", "PUT"],
+        "action": "deny"
+      }
+    ]
+  }
+]

@@ -2,10 +2,12 @@ import express from 'express';
 import http from 'http';
 import config from './config/environment';
 import sqldb from './sqldb';
+import expressConfig from './config/express';
 
 
 var app = express();
 var server = http.createServer(app);
+expressConfig(app);
 require('./routes').default(app);
 
 
