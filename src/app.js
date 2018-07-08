@@ -10,6 +10,7 @@ var server = http.createServer(app);
 expressConfig(app);
 require('./routes').default(app);
 
+if(config.seedDB) {require('./sqldb/seed')}
 
 // Start server
 function startServer() {
@@ -17,6 +18,7 @@ function startServer() {
     console.log('Express server listening on %d, in %s mode', config.port, app.get('env'));
   });
 }
+
 sqldb.sequelize.sync()
 .then(startServer)
 .catch((err)=>{
